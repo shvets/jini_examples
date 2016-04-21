@@ -1,0 +1,141 @@
+<project name="DBService" default="init" basedir=".">
+
+  <path id="dbservice.classpath">
+    <path refid="project.classpath"/>
+
+    <pathelement location="${serviceui.lib}"/>
+    <pathelement location="${hsqldb.lib}"/>
+  </path>
+
+  <path id="hsqldb.classpath">
+    <pathelement location="${hsqldb.lib}"/>
+  </path>
+
+  <property name="database.dir" value="test"/>
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="com/incax/example/DbServiceClient.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="dbservice.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="com/incax/example/RemoteDbServiceImpl.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="db-service.jar"/>
+  <property name="service.dl.archive.name" value="db-service-dl.jar"/>
+  <property name="service.activation.archive.name" value="db-service-act.jar"/>
+  <property name="client.archive.name" value="db-client.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="com.incax.example"/>
+        <in name="com.incax.jdbc"/>
+        <in name="org.sf.jini.examples" />        
+      </inlist>
+      <topclasslist>
+        <topclass name="com.incax.example.RemoteDbServiceImpl"/>
+        <topclass name="com.incax.jdbc.ConnectionPool" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="com.incax.example"/>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="com.incax.example.RemoteDbServiceImpl2" />
+      </topclasslist>
+    </createDepsJar>
+
+     <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client.archive.name}">
+      <inlist>
+        <in name="com.incax.example" />
+      </inlist>
+      <topclasslist>
+        <topclass name="com.incax.example.DbServiceClient" />
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+
+  <target name="service" depends="jar">
+    <runJiniService classname="com.incax.example.RemoteDbServiceImpl"
+                    jarfile="${lib.for.services}/${service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${service.dl.archive.name}">
+      <args>
+        <arg value="src/main/config/dbservice.config"/>
+      </args>
+
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+
+        <pathelement location="${hsqldb.lib}"/>        
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+     <runJiniClient classname="com.incax.example.DbServiceClient"
+                   jarfile="${client.docroot}/${client.archive.name}"
+                   policyfile="src/main/policy/all.policy"/>
+  </target>
+
+  <target name="startdb" description="Run HSQL database server with clean DB">
+    <delete dir="${database.dir}"/>
+
+    <java classname="org.hsqldb.Server" fork="yes"
+          classpathref="hsqldb.classpath" failonerror="true">
+      <arg value="-database.0"/>
+      <arg value="file:${database.dir}/db"/>
+    </java>
+  </target>
+
+<!--
+  <target name="dbmanager" description="Start HSQL DB manager">
+    <java classname="org.hsqldb.util.DatabaseManagerSwing" fork="yes"
+          classpathref="hsqldb.classpath" failonerror="true">
+      <arg value="-url"/>
+      <arg value="jdbc:hsqldb:hsql://localhost/"/>
+      <arg value="-driver"/>
+      <arg value="org.hsqldb.jdbcDriver"/>
+    </java>
+  </target>
+-->
+
+  <target name="dbmanager">
+    <java classname="org.hsqldb.util.DatabaseManager" fork="yes">
+      <classpath>
+        <path refid="hsqldb.classpath"/>
+      </classpath>
+    </java>
+  </target>
+
+</project>

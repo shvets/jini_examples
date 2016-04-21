@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Simple Remote Service over JERI started from configuration file</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Simple Remote Service over JERI started from configuration file</B>
+<BR><BR>
+
+We'll develop a very simple service, based on the previous example. It is exactly the same
+(<B>org.sf.jini.examples.remote.RemoteFilter, org.sf.jini.examples.remote.RemoteFilterImpl</B>), 
+except the service class. It should be aware of Jini lifecycle. It means that constructor
+method should be implemented in the following way:
+<BR>
+
+<PRE>
+  public RemoteConfService(String args[], LifeCycle aLifecycle) throws Exception {
+    // move code from main method here
+  }
+</PRE>
+
+This example depends on the following services:
+<BR>
+- reggie;
+<BR>
+- http server for Jini libraries;
+<BR>
+- http server for this service;
+<BR><BR>
+
+For this example these jar files will be created:
+<BR>
+<LI>for service itself (<B>target/lib/remoteconf-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service
+(<B>target/docroot/service/remoteconf-filter-service-dl.jar</B>).</LI>
+<BR><BR>
+
+The service uses configuration file, located in <B>src\main\config\remoteconf.config</B>. Here
+where we define our transport protocol details.
+<BR><BR>
+For starting this service, another configuration file is used: <B>src\main\config\start-remoteconf.config</B>).
+<BR><BR>
+
+Run this commands:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant remoteconf.service</B>
+<BR>
+<B>>ant remoteconf.client</B>
+<BR><BR>
+
+If you have some time before running the client, probably your new service has been expired. Restart
+your service and then run your client again.
+
+</BODY>
+
+</HTML>

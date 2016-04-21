@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Jini Examples</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Jini Examples</B>
+<BR><BR>
+
+The Jini technology is brilliant, but the lack of examples, easy to
+understand, is the real problem for the beginners. I went through it
+and have some number of easy tests and examples that could help developers
+in this new for them area.
+<BR><BR>
+
+Before the start, the developer should download 
+<A HREF ="http://sourceforge.net/projects/jiniexamples/JiniExamples-2.1.001.src.zip">sources</A> for the tests.
+To get started you will compile everything with the help of
+<A target="none" HREF="http://jakarta.apache.org/ant/index.html">Ant</A>
+tool.
+To download required libraries you have to use
+<A target="none" HREF="http://maven.apache.org">Maven 2</A> tool. Internally, Ant uses Maven2 to download dependencies.
+In order to do this, your Ant tool should use Maven Tasks for Ant library:
+<a href="http://maven.apache.org/download.html">maven-artifact-ant-2.0.4-dep.jar</a>. You need to copy this file into
+<b>${ant.home}/lib</b> directory.
+<BR><BR>
+
+Unzip downloaded archive and make changes in <B>project.properties</B> 
+file. You have to specify <B>jini.home</B> property. It will be used by Ant 
+tool to find out required libraries and security policies.
+<BR><BR>
+
+All examples are built on the base of the little library (<b>org.sf.jini.examples.common</b> package)
+with the following classes:
+<BR><BR>
+- <B>JiniService</B> - common class for any Jini service in these examples;
+<BR>
+- <B>ProxiedJiniService</B> - derived from <B>JiniService</B> class that represents proxied service;
+<BR>
+- <B>ActivatableService</B> - derived from <B>ProxiedJiniService</B> class that represents activatable service;
+<BR>
+- <B>ActivatableFactory</B> - the class that simplifies creation of activatable objects;
+<BR>
+- <B>JiniClient</B> - common class for any Jini client;
+<BR>
+- <B>ListenerClient</B> - Jini client that supports listening of events, extends <B>JiniClient</B> class functionality;
+<BR>
+- <B>Util</B> - class with convenient common methods for Jini lookup.
+<BR><BR>
+
+For building jar files for Jini services and client,
+<a href="https://classdepandjar.dev.java.net/">classdepandjar ant task</a> is used. You don't have to download it though -
+Maven will do this work for you. 
+<BR><BR>
+Now you could start. All examples represent minimalistic approach
+for coding complexity and number of explanations. Just go through sources.
+You are smart enough to understand them. Currently, I have the following groups of examples:
+
+<BR><BR>
+<LI><A HREF="simpletests/index.html">Simple tests</A>;</LI>
+<LI><A HREF="advancedtests/index.html">Advanced tests</A>;</LI>
+<LI><A HREF="practicalexamples/index.html">Practical examples</A>;</LI>
+<BR><BR>
+
+If these examples will help you to start with Jini, I'll be happy. Don't
+hesitate to get me your
+<A href="mailto:shvets_alexander@yahoo.com">feedback</A>.
+
+
+</BODY>
+
+</HTML>

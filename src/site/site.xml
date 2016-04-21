@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="${outputEncoding}"?>
+
+<project name="${project.name}">
+  <bannerLeft>
+    <name>${project.name}</name>
+  </bannerLeft>
+
+  <body>
+    <links>
+      <item name="Maven 2" href="http://maven.apache.org/maven2/"/>
+      <item name="Ant" href="http://ant.apache.org"/>
+      <item name="Jini Home" href="http://www.jini.org"/>
+      <item name="Jini Projects on Java.net" href="https://jini.dev.java.net"/>
+      <item name="${project.name}" href="http://jiniexamples.sourceforge.net"/>
+    </links>
+
+    <menu name="JiniExamples 2.1.x">
+      <item name="Manual" href="docs/manual/index.html"/>
+      <item name="Downloads" href="http://sourceforge.net/project/showfiles.php?group_id=184183"/>
+    </menu>
+
+    ${reports}
+
+  </body>
+</project>

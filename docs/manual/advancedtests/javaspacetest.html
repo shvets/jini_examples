@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>JavaSpace test</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>JavaSpace test</B>
+<BR><BR>
+
+In this example we make simple experiments with JavaSpace. Don't be
+afraid - it's just yet another Jini service (<B>outrigger</B>). 
+Additional service that is required - the Transaction Manager 
+(<B>mahalo</B>). Before example could be tested, the Transaction Manager 
+should be registered and JavaSpace should be started. But don't worry, these services
+are already included:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR><BR>
+
+Dependent services list:
+<b>
+<BR>
+- reggie;
+<BR> 
+- outrigger;
+<BR> 
+- mahalo;
+<BR> 
+- http server for Jini libraries;
+<BR> 
+- http server for this service;
+</b>
+<BR><BR> 
+
+The JavaSpace is the environment that could keep shared instances of
+the <B>net.jini.core.entry.Entry</B> type. We have one such representative:
+<B>org.sf.jini.examples.javaspace.Message</B>. The <B>org.sf.jini.examples.javaspace.JavaSpaceTest</B> class
+is the client, that looks for two services - JavaSpace and Transaction 
+Manager. If these services are discovered, the client will try to create 
+messages and write them ino JavaSpace without and with transaction support.
+The rest of the code will try to read/print/take these entries from the
+JavaSpace.
+<BR><BR>
+
+Now, compile example and test it:
+<BR><BR>
+<B>>ant javaspace.test</B>
+<BR><BR>
+
+You also could run another "hello-world-from-jini" example borrowed from <b>blitz</b> project. 
+It's not dependent on "blitz" project though. In order to run this example, execute these commands:
+<BR><BR>
+<B>>start ant blitzhelloworld.taker</B>
+<BR>
+<B>>start ant blitzhelloworld.writer</B>
+<BR><BR>    
+
+Go-go-go to the next page.
+
+</BODY>
+
+</HTML>

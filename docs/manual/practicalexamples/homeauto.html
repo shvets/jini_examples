@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Homeauto Services</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Homeauto Services</B>
+<BR><BR>
+
+In this example we'll make more experiments with
+<A HREF="http://freetts.sourceforge.net/">FreeTTS library</A>. The original source for this examples
+is located <a href="https://home-automation.dev.java.net/">here</a>. 
+<BR><BR>
+
+Below we have 3 examples:
+<b>
+<li>music service</li>
+<li>time service</li>
+<li>speech service</li>
+</b>
+<BR><BR>
+
+For all these examples we have the client (remote control). It is built with the help of ServiceUI library.
+It waits for services to be registered and when any service get registered, it adds this service to
+the client pane.
+<BR><BR>
+
+The music service is mp3 player.
+<BR><BR>
+
+The time service can speak current server side time. It also uses better tuned voice
+(only numbers and only in English language).
+<BR><BR>
+
+The speech service can speak the entered text.
+<BR><BR>
+
+First, you have to start standard Jini services and the client:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant homeauto.client</B>
+<BR><BR>
+
+Now you can test examples.
+<BR><BR>
+<B>>start ant homeauto.music.service</B>
+<BR>
+<B>>start ant homeauto.time.service</B>
+<BR>
+<B>>start ant homeauto.speech.service</B>
+<BR><BR>
+
+After starting each service one more pane should be created on client side. By selecting one
+of the pane you can work with different services.
+For music service select the mp3 file and click "Play" button.
+For time service select the mp3 file and click "Play" button.
+
+
+</BODY>
+
+</HTML>

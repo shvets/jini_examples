@@ -1,0 +1,44 @@
+<project name="BlitzJavaspaceTest" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+
+  </target>
+
+  <target name="compile" depends="init">
+    <javac destdir="${classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/blitzhelloworld/*.java"/>
+    </javac>
+  </target>
+
+  <target name="taker" depends="compile">
+    <java classname="org.sf.jini.examples.blitzhelloworld.Taker" fork="yes">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+    </java>
+  </target>
+
+  <target name="writer" depends="compile">
+    <java classname="org.sf.jini.examples.blitzhelloworld.Writer" fork="yes">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+    </java>
+  </target>
+
+</project>

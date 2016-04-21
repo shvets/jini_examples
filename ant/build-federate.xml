@@ -1,0 +1,110 @@
+<project name="FederateService" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/federate/FederateClient.java"/>
+      <include name="org/sf/jini/examples/federate/FederateTest.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/federate/FederateService.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="federate-service.jar"/>
+  <property name="service.dl.archive.name" value="federate-service-dl.jar"/>
+  <property name="client1.archive.name" value="federate-client1.jar"/>
+  <property name="client2.archive.name" value="federate-client2.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.federate.FederateService" />
+      </topclasslist>
+    </createDepsJar>
+      
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.remote.RemoteFilter" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client1.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.federate.FederateClient" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client2.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.federate.FederateTest" />
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+  <target name="service" depends="jar">
+    <runJiniService classname="org.sf.jini.examples.federate.FederateService"
+                    jarfile="${lib.for.services}/${service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${service.dl.archive.name}">
+      <args>
+        <arg value='jini://localhost:4160'/>
+        <arg value='jini://localhost:4161'/>
+      </args>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.federate.FederateClient"
+                   jarfile="${client.docroot}/${client1.archive.name}"
+                   policyfile="src/main/policy/all.policy"/>
+  </target>
+
+  <target name="federate" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.federate.FederateTest"
+                   jarfile="${client.docroot}/${client2.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <args>
+        <arg value='jini://localhost:4160'/>
+        <arg value='jini://localhost:4161'/>
+      </args>
+    </runJiniClient>
+
+  </target>
+
+  <target name="services" depends="jar">
+    <runServices policyfile="src/main/policy/all.policy"
+                 configfile="src/main/config/start-federate-all.config"/>
+  </target>
+
+</project>

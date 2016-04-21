@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Client listening for events</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Client listening for events</B>
+<BR><BR>
+
+In this example we will create a client, registered for listening event from
+<B>reggie</B> service. 
+<BR><BR>
+
+We have two additional classes here - for client 
+(<B>org.sf.jini.examples.eclient.EventFilterClient</B>) and for service
+(<B>org.sf.jini.examples.eclient.EventFilterService</B>).
+<BR><BR>
+
+After the build we have 2 archives: 
+<LI>for service itself (<B>lib-service/ec-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/ec-filter-service-dl.jar</B>);</LI>
+<BR>
+
+Now it's time to test them. Start this command:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR><BR>
+
+For this example we have to take care of these services:
+<BR> 
+- reggie;
+<BR> 
+- http server for Jini libraries;
+<BR> 
+- http server for this service;
+<BR> 
+- http server for client code;
+<BR><BR> 
+
+Try to start the client:
+<BR><BR>
+<B>>start ant eclient.client</B>
+<BR><BR>
+
+You could see that the service could not be found. In this case the client 
+will go to the waiting mode.
+<BR><BR>
+
+Now register the service:
+<BR><BR>
+<B>>ant eclient.service</B>
+<BR><BR>
+
+After service registration look at client's console. Finally it got the event.
+<BR><BR>
+
+</BODY>
+
+</HTML>

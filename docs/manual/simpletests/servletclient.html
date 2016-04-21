@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Client as Servlet/JSP</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Client as Servlet/JSP</B>
+<BR><BR>
+
+Now let's try to start the client for our simple service from the servlet.
+I created servlet (in form of JSP page) for wrapping this client (<B>JiniTest,jsp</B>).
+<BR><BR>
+
+The web server that supports JSPs/servlets should be started. I use
+<A TARGET="none" HREF="http://jakarta.apache.org/tomcat">tomcat</A>
+for this purpose.
+<BR><BR>
+
+You have to specify the location of Tomcat Application Server. Do it right now by modifying <B>tomcat.home</B>
+property in the <B>project.properties</B> file.
+<BR><BR>
+
+Start tomcat web server:
+<BR><BR>
+<B>>start ant tomcat.start</B>
+<BR><BR>
+
+Finally, start your favorite browser and write down the following request:
+
+<BR><BR>
+<B>><A HREF="http://localhost:8080/JiniTest.jsp">http://localhost:8080/JiniTest.jsp</A></B>
+<BR><BR>
+
+Be sure that this service is already registered (or still registered). If not, do the following:
+<BR><BR>
+<B>>ant sservice.service</B>
+<BR><BR>
+
+Also, don't forget to run standard Jini services:
+<BR><BR>
+<B>>ant start.services</B>
+<BR><BR>
+
+Now you are ready for the next level.
+
+</BODY>
+
+</HTML>

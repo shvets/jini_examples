@@ -1,0 +1,28 @@
+<Server port="8085" shutdown="SHUTDOWN" debug="0">
+  <Service name="Tomcat-Standalone">
+    <Connector className="org.apache.catalina.connector.http.HttpConnector"
+               port="@tomcat.port@" minProcessors="5" maxProcessors="75"
+               enableLookups="true" redirectPort="8443"
+               acceptCount="10" debug="0" />
+
+    <Engine name="Standalone" defaultHost="localhost" debug="0">
+      <!--Logger className="org.apache.catalina.logger.SystemOutLogger"
+              prefix="catalina_log." suffix=".txt"
+              timestamp="true"/-->
+
+      <Realm className="org.apache.catalina.realm.MemoryRealm" />
+
+      <Host name="localhost" debug="0" appBase="webapps" 
+            unpackWARs="true" autoDeploy="true">
+	<Context path="" 
+	         docBase="@docbase@"
+                 debug="0" reloadable="true" 
+	         override="true">
+	</Context>
+      </Host>
+
+    </Engine>
+
+  </Service>
+
+</Server>

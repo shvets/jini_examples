@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Speaker Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Speaker Service</B>
+<BR><BR>
+
+In this example we'll make small experiment with
+<A HREF="http://freetts.sourceforge.net/">FreeTTS library</A>. It is a speech synthesis system written
+entirely in the Java language.
+<BR><BR>
+
+After the build we have 2 archives:
+<LI>for the service itself (<B>lib-service/speaker-service.jar</B>);</LI>
+<LI>for the client that wants to work with this service
+(<B>docroot/service/speaker-service-dl.jar</B>).</LI>
+
+<BR><BR>
+You can test this example now:
+
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant speaker.service</B>
+<BR>
+<B>>ant speaker.client</B>
+<BR><BR>
+
+Client should list names of all available voices and the it pronounce the phrase:
+"Hello, Jini World".
+<BR><BR>
+
+</BODY>
+
+</HTML>

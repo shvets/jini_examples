@@ -1,0 +1,84 @@
+<project name="FailoverService" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/failover/FailoverClient.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/failover/FailoverService.java"/>
+      <include name="org/sf/jini/examples/failover/FailoverPreparer.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="failover-service.jar"/>
+  <property name="service.dl.archive.name" value="failover-service-dl.jar"/>
+  <property name="client.archive.name" value="failover-client.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.failover.FailoverService" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.remote.RemoteFilter" />
+        <topclass name="org.sf.jini.examples.failover.FailoverPreparer" />
+        <topclass name="org.sf.jini.examples.common.MultipleServiceLocator" />
+      </topclasslist>
+
+      <filesets>
+        <zipfileset src="${jini.home}/lib/jsk-lib.jar" includes="net/jini/**/*.class, com/sun/jini/**/*.class"/>        
+      </filesets>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.failover.FailoverClient" />
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+ <target name="service" depends="jar">
+    <mkdir dir="target/log"/>
+   
+    <runJiniConfiguredService policyfile="src/main/policy/all.policy"
+                              configfile="src/main/config/start-failover.config"/>
+  </target>
+
+  <target name="client" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.failover.FailoverClient"
+                   jarfile="${client.docroot}/${client.archive.name}"
+                   policyfile="src/main/policy/all.policy"/>
+  </target>
+
+</project>

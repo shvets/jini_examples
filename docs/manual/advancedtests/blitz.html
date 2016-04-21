@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Blitz JavaSpace test</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Blitz JavaSpace test</B>
+<BR><BR>
+
+Blitz is separate implementation of JavaSpace. So, there is no special instructions how to work 
+with it. You only need to run this implementation instead of "outrigger".
+
+Use this command:
+<BR><BR>
+<B>>start ant blitz.services</B>
+<BR><BR>
+
+instead of "start.services" command.
+<BR><BR>
+
+Configuration is located here: <B>src\main\config\start-blitz-all.config </B> and for blitz itself:
+<B>src\main\config\blitz.config</B>.
+<BR><BR> 
+
+Dependent services list:
+<BR> 
+- reggie;
+<BR> 
+- blitz;
+<BR> 
+- http server for Jini libraries;
+<BR> 
+- http server for this service;
+<BR><BR> 
+
+Now you can run any of these commands:
+<BR><BR>
+<B>>ant blitz.stats</B>
+<BR>
+<B>>ant blitz.dashboard</B>
+<BR>
+<B>>ant blitz.entrysizer</B>
+<BR><BR>    
+
+
+</BODY>
+
+</HTML>

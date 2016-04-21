@@ -1,0 +1,202 @@
+<!-- Macrodefs -->
+
+<project name="Macrodefs" basedir=".">
+  <description>
+    Script for various taskdefs and macrodefs
+  </description>
+
+  <taskdef name="testng" classname="org.testng.TestNGAntTask">
+    <classpath>
+      <path refid="maven.test.classpath"/>
+    </classpath>
+  </taskdef>
+
+  <taskdef name="classdepandjar" classname="org.jini.rio.tools.ant.ClassDepAndJarTask">
+    <classpath>
+      <path refid="maven.compile.classpath"/>
+    </classpath>
+  </taskdef>
+
+  <taskdef name="apt" classname="org.apache.tools.ant.taskdefs.Apt">
+    <classpath>
+      <!--pathelement location="ant-apttask.jar"/-->
+      <path refid="maven.compile.classpath"/>
+    </classpath>
+  </taskdef>
+
+  <macrodef name="ant-child">
+    <attribute name="antfile"/>
+    <attribute name="target"/>
+    
+    <sequential>
+      <ant antfile="@{antfile}" target="@{target}" inheritRefs="true"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="createDepsJar">
+    <attribute name="classes"/>
+    <attribute name="jarfile"/>
+
+    <element name="topclasslist"/>
+    <element name="inlist"/>
+    <element name="classpathentries" optional="yes"/>
+    <element name="filesets" optional="yes"/>
+
+    <sequential>
+      <classdepandjar jarfile="@{jarfile}" files="true">
+        <classpath>
+          <path refid="project.classpath"/>
+
+          <pathelement location="@{classes}"/>
+
+          <classpathentries/>
+        </classpath>
+
+        <topclasslist/>
+        <inlist/>
+        <filesets/>
+
+      </classdepandjar>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runJiniService">
+    <attribute name="classname"/>
+    <attribute name="jarfile"/>
+    <attribute name="policyfile"/>
+    <attribute name="codebase"/>
+
+    <element name="args" optional="yes"/>
+    <element name="jvmargs" optional="yes"/>
+    <element name="classpathentries" optional="yes"/>
+
+    <sequential>
+      <java classname="@{classname}" fork="yes">
+        <classpath>
+          <path refid="project.classpath"/>
+
+          <pathelement location="@{jarfile}"/>
+
+          <classpathentries/>
+        </classpath>
+
+        <args/>
+        <jvmargs/>
+
+        <jvmarg value='-Djava.security.policy="@{policyfile}"'/>
+        <jvmarg value="-Djava.rmi.server.codebase=@{codebase}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
+
+  <macrodef name="runJiniConfiguredService">
+    <attribute name="policyfile"/>
+    <attribute name="configfile"/>
+
+    <element name="classpathentries" optional="yes"/>
+    <element name="jvmargs" optional="yes"/>
+
+    <sequential>
+      <java jar="${jini.home}/lib/start.jar" fork="yes">
+        <classpath>
+          <!--path refid="project.classpath"/-->
+
+          <classpathentries/>
+        </classpath>
+
+        <jvmarg value='-Djava.ext.dirs=${java.home}/lib/ext;${jini.home}/lib-ext'/>
+        <jvmarg value='-Djava.security.policy="@{policyfile}"'/>
+        <jvmarg value='-Djini.home=${jini.home}'/>
+
+        <jvmarg value='-Drepository.home=${repository.home}'/>
+
+        <jvmarg value='-Dsystem.host=${system.host}'/>
+        <jvmarg value='-Dsystem.port=${system.port}'/>
+
+        <jvmarg value='-Dservice.host=${service.host}'/>
+        <jvmarg value='-Dservice.port=${service.port}'/>
+        <jvmarg value='-Dservice.docroot=${service.docroot}'/>
+        <jvmarg value='-Dservice.lib.dir=${service.lib.dir}'/>
+        
+        <jvmargs/>
+
+        <arg line="@{configfile}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runJiniClient">
+    <attribute name="classname"/>
+    <attribute name="jarfile"/>
+    <attribute name="policyfile"/>
+
+    <element name="args" optional="yes"/>
+    <element name="jvmargs" optional="yes"/>
+    <element name="classpathentries" optional="yes"/>
+
+    <sequential>
+      <java classname="@{classname}" fork="yes">
+        <classpath>
+          <path refid="project.classpath"/>
+
+          <pathelement location="@{jarfile}"/>
+
+          <classpathentries/>          
+        </classpath>
+
+        <args/>
+        <jvmargs/>
+
+        <jvmarg value='-Djava.security.policy="@{policyfile}"'/>        
+      </java>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="runServices">
+    <attribute name="policyfile"/>
+    <attribute name="configfile"/>
+
+    <element name="classpathentries" optional="yes"/>
+    <element name="jvmargs" optional="yes"/>
+
+    <sequential>
+      <java jar="${jini.home}/lib/start.jar" fork="yes" newenvironment="false">
+        <classpath>
+          <path refid="project.classpath"/>
+
+          <classpathentries/>
+        </classpath>
+
+        <jvmarg value='-Djava.ext.dirs=${java.home}/lib/ext;${jini.home}/lib-ext'/>
+        <jvmarg value='-Djava.security.policy="@{policyfile}"'/>
+        <jvmarg value='-Djini.home=${jini.home}'/>
+
+        <jvmarg value='-Drepository.home=${repository.home}'/>
+
+        <jvmarg value='-Dsystem.host=${system.host}'/>
+        <jvmarg value='-Dsystem.port=${system.port}'/>
+
+        <jvmarg value='-Dservice.host=${service.host}'/>
+        <jvmarg value='-Dservice.port=${service.port}'/>
+        <jvmarg value='-Dservice.docroot=${service.docroot}'/>
+        <jvmarg value='-Dservice.lib.dir=${service.lib.dir}'/>
+
+        <jvmarg value='-Dclient.host=${client.host}'/>
+        <jvmarg value='-Dclient.port=${client.port}'/>
+        <jvmarg value='-Dclient.docroot=${client.docroot}'/>
+
+        <jvmargs/>
+
+        <!--
+              <jvmarg value='-DproxySet=true'/>
+              <jvmarg value='-DproxyHost=${proxy.server.host}'/>
+              <jvmarg value='-DproxyPort=${proxy.server.port}'/>
+        -->
+
+        <arg line="@{configfile}"/>
+      </java>
+    </sequential>
+  </macrodef>
+
+</project>

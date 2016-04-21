@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Failover example</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Failover example</B>
+<BR><BR>
+
+This example is based on similar example from <a href="http://www.incax.com/examples.htm">IncaX</a> company.
+<BR><BR>
+
+This example shows how to use a ProxyPreparer to detect (potential) failure 
+of your service and then lookup a different instance of that service in
+the client's proxy. The ProxyPreparer then swaps the proxies so the client can continue using
+a different instance of the same service. We have implementation of this interface as
+<b>org.sf.jini.examples.failover.FailoverPreparer</b>.
+<BR><BR>
+
+How to run this example. First, start required Jini services:
+<BR><BR>
+<b>>start ant start.services</b>
+<BR><BR>
+
+Start one instances of the example service:
+<BR><BR>
+<b>>start ant failover.service</b>
+<BR><BR>
+
+Run the client example
+<BR><BR>
+<b>>start ant failover.client</b>
+<BR><BR>
+
+Start a second instance of the service;
+<BR><BR>
+<b>>start ant failover.service</b>
+<BR><BR>
+
+Stop the first of the ping service instances.
+<BR><BR>
+
+You client code should show that the proxy has switched services
+<BR><BR>
+
+</BODY>
+
+</HTML>

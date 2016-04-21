@@ -1,0 +1,74 @@
+<project name="BlitzTest" default="init" basedir=".">
+
+  <path id="blitz.classpath">
+    <path refid="project.classpath"/>
+
+    <pathelement location="${repository.home}/org/dancres/blitz/1.29/blitz-1.29.jar"/>
+    <pathelement location="${repository.home}/org/dancres/blitzui/1.29/blitzui-1.29.jar"/>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+
+  </target>
+
+  <target name="compile" depends="init">
+    <javac destdir="${classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="blitz.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/blitz/*.java"/>
+    </javac>
+  </target>
+
+  <target name="stats" depends="compile">
+    <java classname="org.sf.jini.examples.blitz.TestClient" fork="yes">
+      <classpath>
+        <path refid="blitz.classpath"/>
+
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+    </java>
+  </target>
+
+  <target name="entrysizer" depends="compile">
+    <java classname="org.sf.jini.examples.blitz.TestSizer" fork="yes">
+      <classpath>
+        <path refid="blitz.classpath"/>
+
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+    </java>
+  </target>
+
+  <target name="dashboard" depends="compile">
+    <java classname="org.dancres.blitz.tools.dash.StartDashBoard" fork="yes">
+      <classpath>
+        <path refid="blitz.classpath"/>
+        <pathelement location="${repository.home}/org/dancres/dashboard/1.29/dashboard-1.29.jar"/>
+        <pathelement location="${repository.home}/org/dancres/stats/1.29/stats-1.29.jar"/>
+
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+
+      <arg line='dancres'/>
+    </java>
+  </target>
+
+  <target name="services">
+    <runServices policyfile="src/main/policy/all.policy"
+                 configfile="src/main/config/start-blitz-all.config"/>
+  </target>
+
+</project>

@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Activatable Jeri Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Activatable Jeri service</B>
+<BR><BR>
+
+Now we 'll try to convert <B>remote</B> service into <B>Activatable</B> object.
+In this case the service shouldn't occupy memory all the time. Instead,
+we'll register our services on <B>phoenix</B> as the code that will be 
+activated only on client's request. All the rest time our service will be 
+kept in serialized form.
+<BR><BR>
+
+This example is based on <B>remote</B> primer. We will modify remote filter's 
+implementation (<B>org.sf.jini.examples.activation.ActFilterImpl</B>) by exporting our
+object through activation system. The service
+(<B>org.sf.jini.examples.activation.ActFilterService</B>) performs all preparation work
+for creating activatable object. And the client part 
+(<B>org.sf.jini.examples.activation.ActFilterClient</B>) is just looking for 
+required service.
+<BR><BR>
+
+After the build we have 3 archives: 
+<LI>for service itself (<B>lib-service/act-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/act-filter-service-dl.jar</B>);</LI>
+<LI>for activation framework 
+(<B>docroot/service/act-filter-service-act.jar</B>).</LI>
+<BR><BR>
+
+The last archive is required for activation framework, because it knows
+nothing about activatable objects a priori and publishing the code on the web
+is the only way to resolve the problem.
+<BR><BR>
+
+Now it's time to test them. Execute these commands in the following order:
+
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant phoenix.start</B>
+<BR>
+<B>>ant act.service</B>
+<BR><BR>
+
+Usually it takes some time to register the service. Wait...
+<BR><BR>
+
+Now, you can strat the client:
+<BR><BR>
+
+<B>>ant act.client</B>
+<BR><BR>
+
+This service is registering for 3 minutes. After that the lease will be 
+expired and service terminated automatically.
+<BR><BR>
+
+The <B>org.sf.jini.examples.activation.Updater</B> class is designed as primitive form of lease
+renewal service. It is implemented as separate thread that updates lease
+iteratively. When the service starts, it saves the registration object as 
+marshalled object inside the file. The <B>org.sf.jini.examples.acrivation.Updater</B> class
+reads this file, reconstitutes the marshalled object and starts threading.
+<BR><BR>
+
+To test this class, start the command:
+
+<BR><BR>
+<B>>ant act.updater</B>
+<BR><BR>
+
+You got correct answer? Move ahead.
+</BODY>
+
+</HTML>

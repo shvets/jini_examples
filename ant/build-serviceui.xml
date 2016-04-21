@@ -1,0 +1,110 @@
+<project name="ServiceUITest" default="init" basedir=".">
+
+  <path id="serviceui.classpath">
+    <path refid="project.classpath"/>
+
+    <pathelement location="${serviceui.lib}"/>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="serviceui.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/serviceui/UIFilterClient.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="serviceui.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/serviceui/UIFilterService.java"/>
+      <include name="org/sf/jini/examples/serviceui/FilterFactory.java"/>      
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="ui-filter-service.jar"/>
+  <property name="service.dl.archive.name" value="ui-filter-service-dl.jar"/>
+  <property name="client.archive.name" value="ui-filter-client.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.serviceui.UIFilterService" />
+        <topclass name="net.jini.lookup.entry.UIDescriptor"/>
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.simpleservice.FilterImpl"/>
+        <topclass name="org.sf.jini.examples.serviceui.FilterFactory"/>
+        <topclass name="org.sf.jini.examples.serviceui.FilterComponentFactory"/>        
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+
+      <filesets>
+        <zipfileset src="${serviceui.lib}" includes="net/jini/**/*.class, com/artima/**/*.class"/>
+      </filesets>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.serviceui.UIFilterClient" />
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+    </createDepsJar>
+  </target>
+
+  <target name="service" depends="jar">
+    <runJiniService classname="org.sf.jini.examples.serviceui.UIFilterService"
+                    jarfile="${lib.for.services}/${service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${service.dl.archive.name}">
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.serviceui.UIFilterClient"
+                   jarfile="${client.docroot}/${client.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+    </runJiniClient>
+  </target>
+</project>

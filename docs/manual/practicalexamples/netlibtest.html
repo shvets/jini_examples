@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Test with NetLib library</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Test with NetLib library</B>
+<BR><BR>
+
+In this example we'll make experiments with 
+<A HREF="http://home.comcast.net/~shvets/Downloads/netlib.zip">NetLib library</A>. You should download
+the most resent version or use one that resides in the <B>lib</B> directory.
+<BR><BR>
+
+We have the following classes here:
+<BR><BR>
+- <B>org.sf.jini.examples.netlib.NetlibClient</B> - the test client;
+<BR>
+- <B>org.sf.jini.examples.netlib.NetlibService</B> - the test service;
+<BR>
+- <B>org.sf.jini.examples.netlib.JiniServer</B> - the class that represents Jini service as a server;
+<BR>
+- <B>org.sf.jini.examples.netlib.NetlibServer</B> - the test server, extension of 
+<B>org.sf.jini.examples.netlib.JiniServer</B> class.
+<BR><BR>
+
+Client listens for events. If the server is not started yet, the client 
+will wait. After receiving the notification from the server, the client 
+creates simple request and send it to the server. Server prepares responses 
+and sends them to the client. Server class is just wrapper around service, so 
+when we start the server, we register the service and when we stop the server,
+we terminate the service by cancelling the lease.
+<BR><BR>
+
+After the build we have 3 archives: 
+<LI>for the service itself (<B>lib-service/netlib-service.jar</B>);</LI>
+<LI>for the client that wants to work with this service 
+(<B>docroot/service/netlib-service-dl.jar</B>);</LI>
+<LI>for the server that will notify the client about incoming events
+(<B>docroot/client/netlib-client-dl.jar</B>).</LI>
+
+<BR><BR>
+Ready? Execute these commands in the following order:
+
+<BR><BR>
+<B>>start ant netlib.service</B>
+<BR>
+<B>>ant netlib.client</B>
+<BR><BR>
+Well done.
+
+</BODY>
+
+</HTML>

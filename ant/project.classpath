@@ -1,0 +1,12 @@
+<!-- project.classpath -->
+
+<path id="project.classpath">
+
+  <pathelement location="${jini.home}/lib/jsk-lib.jar"/>
+
+  <pathelement location="${jini.home}/lib/jsk-platform.jar"/>
+
+  <path refid="maven.compile.classpath"/>
+
+</path>
+

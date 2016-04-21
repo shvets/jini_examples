@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Fiddler example</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Fiddler example</B>
+<BR><BR>
+
+The <B>Fiddler</B> is Sun's implementation of <B>LookupDiscoveryService</B> 
+interface. This implementation could be used as convenient way for 
+starting services dynamically when new registrars created.
+<BR><BR>
+
+The service (<B>org.sf.jini.examples.fiddler.FiddlerService</B>) looks for
+the <B>LeaseRenewalService</B> and <B>LookupDiscoveryService</B> services. 
+If they started, the program gets the <B>LeaseRenewalSet</B> object. 
+The last will be used for registering services that requires lease renewal.
+<BR><BR>
+
+On the next step we creates two activatable objects: the listener of lease 
+renewal events (<B>org.sf.jini.examples.fiddler.LeaseRenewer</B>) and the listener of 
+lookup discoveries (<B>org.sf.jini.examples.fiddler.DiscoveryListener</B>).The first object
+is registering on <B>LeaseRenewalSet</B> as the listener of expiration
+warnings and lease failures. It will be activated by activation system few 
+seconds before some lease expired. It's main goal is to renew leases for 
+all registered services. After finishing its work this listener will go 
+to inactive state.
+<BR><BR>
+
+The second object (<B>org.sf.jini.examples.fiddler.DiscoveryListener</B>) will listen for lookup
+services discoveries and when it will happen, starts out our service.
+<BR><BR>
+
+We don't register our service in the main program, as we did it in <B>norm</B>
+example. Instead, we create marshalled object that holds our service 
+(or some its part), lease renewal set and some additional parameters. 
+We transfer this data holder to discovery listener when it is created.
+The discovery listener could extract required information and perform 
+registration, when new registrar will be discovered.
+<BR><BR>
+
+The client  (<B>org.sf.jini.examples.fiddler.FiddlerClient</B>) has no additional functionality. 
+It only looks for required service.
+<BR><BR>
+
+After the build we have 4 archives: 
+<LI>for service itself (<B>lib-service/fiddler-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/fiddler-filter-service-dl.jar</B>);</LI>
+<LI>for lease renewer as activatable object
+(<B>docroot/client/fiddler-filter-service-act.jar</B>);</LI>
+<LI>for lookup discovery listener as activatable object
+(<B>docroot/client/fiddler-filter-service-act2.jar</B>).</LI>
+<BR><BR>
+
+Now it's time to test them. Run these commands:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant fiddler.service</B>
+<BR>
+<B>>ant fiddler.client</B>
+<BR><BR>
+
+If you need to remove <B>fiddler</B> service form the registrar, start 
+the command:
+<BR><BR>
+<B>>ant fiddler.destroy</B>
+<BR><BR>
+
+You could do the same from the space borowser. To do it select the service 
+from the list, activate context menu and choose <B>Admin Service</B>. 
+New Window will be displayed. Choose <B>Admin|Destroy</B> item from the menu.
+<BR><BR>
+
+</BODY>
+
+</HTML>

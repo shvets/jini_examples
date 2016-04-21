@@ -1,0 +1,122 @@
+<project name="ActivatableRMIService" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/activation/ActFilterClient.java"/>
+      <include name="org/sf/jini/examples/activation/Updater.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/activation/ActFilterImpl.java"/>      
+      <include name="org/sf/jini/examples/activation/ActFilterService.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="act-filter-service.jar"/>
+  <property name="service.dl.archive.name" value="act-filter-service-dl.jar"/>
+  <property name="service.activation.archive.name" value="act-filter-service-act.jar"/>
+  <property name="client.archive.name" value="act-filter-client.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.activation.ActFilterService"/>
+        <topclass name="org.sf.jini.examples.activation.ActFilterImpl" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.activation.ActFilterImpl" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.activation.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.activation.ActFilterImpl" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.activation.ActFilterClient" />
+        <topclass name="org.sf.jini.examples.activation.Updater" />        
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+  <target name="service" depends="jar">
+    <runJiniService classname="org.sf.jini.examples.activation.ActFilterService"
+                    jarfile="${lib.for.services}/${service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${service.dl.archive.name}">
+      <jvmargs>
+        <jvmarg value="-Djava.rmi.activation.codebase=http://${service.host}:${service.port}/${service.activation.archive.name}"/>
+      </jvmargs>
+
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+     <runJiniClient classname="org.sf.jini.examples.activation.ActFilterClient"
+                   jarfile="${client.docroot}/${client.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpathentries>
+    </runJiniClient>
+  </target>
+
+  <target name="updater" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.activation.Updater"
+                   jarfile="${client.docroot}/${client.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+
+        <pathelement location="${jini.home}/lib/reggie.jar"/>      
+      </classpathentries>
+    </runJiniClient>
+  </target>
+
+</project>

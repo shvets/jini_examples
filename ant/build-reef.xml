@@ -1,0 +1,51 @@
+<project name="ReefTest" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/wonderly/**/*.java"/>
+      <include name="net/jini/**/*.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="service.compile"/>
+
+  <property name="service.archive.name" value="reef.jar"/>
+  <property name="service.dl.archive.name" value="reef-dl.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.wonderly" />
+        <in name="net.jini" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.wonderly.jini.reef.RegistrarImpl" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.wonderly.jini.reef" />
+        <in name="net.jini.core.lookup" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.wonderly.jini.reef.RegistrarProxy" />
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+  <target name="reef.start.services">
+    <runServices policyfile="src/main/policy/all.policy" configfile="src/main/config/start-reef-all.config"/>
+  </target>
+
+</project>

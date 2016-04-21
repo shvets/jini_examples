@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>EventMailbox (mercury) example</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>EventMailbox example</B>
+<BR><BR>
+
+The <b>EventMailbox</b> is the Jini service that could listen for events on behalf
+of some client. Client could read them later in one shot. If this 
+behavior is appropriate for the application, this example will be useful
+for understanding how to do it.
+<BR><BR>
+
+The <B>mercury</B> is Sun's implementation of the event mailbox service.
+<BR><BR>
+
+This example is built on the base of <B>eventgen</B> primer. We'll slightly
+modify those clients. 
+<BR><BR>
+
+The first client (<B>org.sf.jini.examples.mailbox.MailboxClient1</B>), which 
+previously was listening the events (<B>org.sf.jini.examples.eventgen.ExtFilterClient1</B>),
+now reassigned this task to the EventMailbox service. So it's not required 
+to publish its code on the web.
+<BR><BR>
+
+The second client (<B>org.sf.jini.examples.mailbox.MailboxClient2</B>) performs the similar 
+task like <B>org.sf.jini.examples.eventgen.ExtFilterClient2</B>, making modifications on service
+side.
+<BR><BR>
+
+And finally, we have the <B>org.sf.jini.examples.mailbox.MailboxReader</B> class, that 
+performs reading events from the EventMailbox. To do that, it should publish 
+corresponding code on the Web.
+<BR><BR>
+
+The <B>org.sf.jini.examples.mailbox.MailboxClient1</B> and <B>org.sf.jini.examples.mailbox.MailboxReader</B> classes
+share the same instance of the event mailbox registration. To do that 
+the client saves the registration as marshalled object in serialized 
+stream as <B>"mymailbox.mb"</B> file. Later, when reader is trying to 
+read events, it reconstitutes serialized marshalled object and performs
+reading.
+<BR><BR>
+
+After the build we have 4 archives. The only 3 of them are required 
+for this task: 
+<LI>for service itself (<B>lib-service/eg-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/eg-filter-service-dl.jar</B>);</LI>
+<LI>for server that will notify the client about incoming events
+(<B>docroot/client/mb-filter-client-dl.jar</B>);</LI>
+<BR><BR>
+
+Now it's time to test them. Run this command first:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR><BR>
+
+Start the service and publish it:
+<BR><BR>
+<B>>start ant egen.service</B>
+<BR><BR>
+
+Now let's start the first client that will register the EventMailbox service
+as events listener:
+
+<BR><BR>
+<B>>ant mbox.client1</B>
+<BR><BR>
+
+Start the second client:
+
+<BR><BR>
+<B>>ant mbox.client2</B>
+<BR><BR>
+
+It will make some modification, that will be saved in EventMailbox as events
+for the delivery.
+<BR><BR>
+
+You could start second client multiple number of times. It will add new
+events to EventMailbox.
+<BR><BR>
+
+Finally, try to read events from the EventMailbox:
+<BR><BR>
+<B>>ant mbox.reader</B>
+<BR><BR>
+
+This command will display all events, collected already in the event mailbox 
+and will remove all the messages from it.
+</BODY>
+
+</HTML>

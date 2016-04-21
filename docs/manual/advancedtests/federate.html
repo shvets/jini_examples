@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Federate example</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+
+<B>Federate example</B>
+<BR><BR>
+
+This example is based on similar example from <a href="http://www.incax.com/examples.htm">IncaX</a> company.
+<BR><BR>
+
+Federated example shows how to connect (federate) lookup services. Why do we need this?
+By federating these services we provide the following functionality to the client.
+The client needs to be registered only on one lookup service. All the services from another lookup service are
+automatically available to the client thanks to the federation.
+<BR><BR>
+
+This doesn't work out-of-the box though. You need to write the discovery code, which can "tunnel" from one federated
+lookup service to another. This is done by implementing special lookup method for the client in supporting class:
+<b>org.sf.jini.examples.common.FederatedServiceLocator</b> that implements
+<b>net.jini.lookup.ServiceDiscoveryListener</b>.
+<BR><BR>
+
+You need to run the following commands:
+<BR><BR>
+<b>
+>start ant federate.services
+<BR>
+>ant federate.federate
+<BR>
+>ant federate.service
+<BR>
+>ant federate.client
+<BR><BR>
+</b>
+
+First, you run standard Jini services. The only difference here is that  you run 2 lookup services (reggie)
+instead of one. We use <b>src/main/config/reggie1.config</b> and <b>src/main/config/reggie2.config</b>
+configuration files to run them.
+<BR><BR>
+
+Second command federates 2 lookup services together. After that we register the service on both lookup services.
+<BR><BR>
+And finally we run client, that locates all services on both lookup services and executes discovered services
+consequently.
+
+</HTML>

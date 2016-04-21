@@ -1,0 +1,60 @@
+<!-- Jini Tools Services -->
+
+<project name="jiniservices" default="reggie" basedir=".">
+  <description>
+    Script for starting various Jini services
+  </description>
+
+  <target name="phoenix.start">
+    <mkdir dir="target"/>
+
+    <java classname="com.sun.jini.phoenix.Activation" fork="yes">
+      <classpath>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpath>
+
+      <arg value="src/main/config/phoenix.config"/>
+
+      <jvmarg value="-Djava.security.manager="/>
+      <jvmarg value="-Djava.security.policy=src/main/policy/all.policy"/>
+      <jvmarg value="-Djava.remote.server.codebase=${jini.basic.dl.web.dir}/phoenix-dl.jar"/>
+    </java>
+  </target>
+
+  <target name="phoenix.stop">
+    <mkdir dir="target"/>
+    
+    <java classname="com.sun.jini.phoenix.Activation" fork="yes">
+      <classpath>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpath>
+
+      <arg value="-stop"/>
+      <arg value="src/main/config/phoenix.config"/>
+
+      <jvmarg value="-Djava.security.manager="/>
+      <jvmarg value="-Djava.security.policy=src/main/policy/all.policy"/>
+      <jvmarg value="-Djava.remote.server.codebase=${jini.basic.dl.web.dir}/phoenix-dl.jar"/>
+    </java>
+  </target>
+
+  <target name="start.services">
+    <runServices policyfile="src/main/policy/all.policy"
+                 configfile="src/main/config/start-all.config"/>
+  </target>
+
+  <target name="start.services.activatable">
+    <runServices policyfile="src/main/policy/all.policy"
+                 configfile="src/main/config/start-all-activatable.config"/>
+  </target>
+
+  <!-- Starting Reef service instead of reggie. -->
+
+  <target name="start.services.reef">
+    <runServices policyfile="src/main/policy/all.policy"
+                 configfile="src/main/config/start-reef-all.config"/>
+  </target>
+
+</project>

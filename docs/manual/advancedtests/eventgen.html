@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Building event generator</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Building event generator</B>
+<BR><BR>
+
+In this example we build a simple service, that could generate events,
+and corresponding client, registered for listening these events. This example
+is based on the code from <B>remoteservice</B> example.
+<BR><BR>
+
+First of all we extend the service interface (<B>org.sf.jini.examples.eventgen.ExtFilter</B>) from
+<B>org.sf.jini.examples.rmi.RemoteFilter</B>. It has two additional methods for registering
+new listeners and making some modifications on the service side. 
+The <B>org.sf.jini.examples.eventgen.ExtFilterImpl</B> class is an implementation of this service 
+and the <B>org.sf.jini.examples.eventgen.ExtFilterProxy</B> class is the proxy object. We use
+Jeri for the event notification, so our implementation should be registerd for 
+it and should publish its code on the web.
+<BR>
+
+The <B>org.sf.jini.examples.eventgen.ExtFilterService</B> class register corresponding proxy 
+object. The service implementation is capable to generate events of
+<B>org.sf.jini.examples.eventgen.PrefixEvent</B> type.
+<BR><BR>
+
+For demonstration purpose to show how it works we'll create two clients.
+The first client <B>org.sf.jini.examples.eventgen.ExtFilterClient1</B> is registered for events 
+and waits for their coming.
+The second one isn't interesting in event notifications, it only makes 
+some modifications on service side.
+<BR>
+
+After the build we have 3 archives: 
+<LI>for service itself (<B>lib-service/eg-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/eg-filter-service-dl.jar</B>);</LI>
+<LI>for server that will notify the client about incoming events
+(<B>docroot/client/eg-filter-client-dl.jar</B>);</LI>
+<BR><BR>
+
+You could see that there is no difference against <B>remoteservice</B> example. 
+The same set of archives.
+<BR><BR>
+
+Now it's time to test them. Start the service and publish it: 
+<BR><BR>
+<B>>start ant egen.service</B>
+<BR><BR>
+
+Now let's start the first client that will wait for events:
+<BR><BR>
+<B>>start ant egen.client1</B>
+<BR><BR>
+
+After that start the second client:
+
+<BR><BR>
+<B>>ant egen.client2</B>
+<BR><BR>
+
+It will make some modification, that will be seen on the first 
+client's console.
+<BR><BR>
+
+Go to the next example.
+</BODY>
+
+</HTML>

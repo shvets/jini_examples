@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Norm example</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Norm example</B>
+<BR><BR>
+
+The <B>Norm</B> is Sun's implementation of <B>LeaseRenewalService</B> 
+interface. This implementation could be used as convenient way for 
+updating leases for activatable services. We tried to solve this problem 
+in form of the thread (see <B>activation</B> example, <b>Updater</b> class). The <B>Norm</B> is 
+implemented as  activatable object, so it won't consume resources 
+when it's idle.
+<BR><BR>
+
+This example is built on the base of <B>act</B> primer. The service 
+activation program (<B>org.sf.jini.examples.norm.NormFilterService</B>) looks for 
+the <B>LeaseRenewalService</B> service. If it exists, the program gets 
+the <B>LeaseRenewalSet</B> object. The last will be used for registering 
+services that requires lease renewal.
+<BR><BR>
+
+On the next step we create two activatable objects: the listener of lease 
+renewal events (<B>org.sf.jini.examples.norm.LeaseRenewer</B>) and our service. The first object
+is registering on <B>LeaseRenewalSet</B> as the listener of expiration
+warnings and lease failures. It will be activated by activation system few 
+seconds before some lease expired. It's main goal is to renew leases for 
+all registered services. After finishing its work this listener will go 
+to inactive state.
+<BR><BR>
+
+To start lease renewal for our service we have to register it
+on <B>LeaseRenewalSet</B> object with the help of <B>renewFor()</B> method.
+<BR><BR>
+
+The client  (<B>org.sf.jini.examples.norm.NormFilterClient</B>) has no additional functionality. 
+It only looks for required service.
+<BR><BR>
+
+After the build wel have 4 archives:
+<LI>for service itself (<B>lib-service/norm-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/norm-service-dl.jar</B>);</LI>
+<LI>for our service as activatable object
+(<B>docroot/client/norm-service-act.jar</B>);</LI>
+<LI>for lease renewer as activatable object
+(<B>docroot/client/norm-service-act2.jar</B>);</LI>
+<BR><BR>
+
+Now it's time to test them. Execute these commands in the following order:
+
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant phoenix</B>
+<BR>
+<B>>ant norm.service</B>
+<BR>
+<B>>ant norm.client</B>
+<BR><BR>
+
+I'm sure, you got the correct responce.
+<BR><BR>
+
+</BODY>
+
+</HTML>

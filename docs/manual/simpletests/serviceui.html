@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Simple Service as UI Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Simple Service as UI Service</B>
+<BR><BR>
+
+This example explains how to work with 
+<A TARGET="none" HREF="http://www.artima.com/jini/serviceui/index.html">Service UI</A> 
+library. 
+<BR><BR>
+
+This example has the following classes. The <B>org.sf.jini.examples.serviceui.FilterFactory</B>
+class is the UI Factory. Its main responsibility is to create UI frame 
+(<B>org.sf.jini.examples.serviceui.FilterFrame</B>). This frame, in turn, holds a panel
+(<B>org.sf.jini.examples.serviceui.FilterPanel</B>) for displaying results. It takes our service
+as input parameter and performs method invocation for the service.
+<BR><BR>
+Another UI Factory class is <B>org.sf.jini.examples.serviceui.FilterComponentFactory</B>.
+It creates (<B>org.sf.jini.examples.serviceui.FilterPanel</B>) UI component. 
+<BR><BR>
+
+We also have 2 classes - for client (<B>org.sf.jini.examples.serviceui.FilterClient</B>)
+and server (<B>org.sf.jini.examples.serviceui.FilterService</B>) sides.
+<BR><BR>
+
+We'll create 2 archives: 
+<LI>for service itself (<B>target/lib-service/ui-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>target/docroot/service/ui-filter-service-dl.jar</B>).</LI>
+<BR>
+
+Now execute these commands in the following order:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>ant serviceui.service</B>
+<BR>
+<B>>ant serviceui.client</B>
+<BR><BR>
+
+In case of success, client will raise the frame window. If everything is ok, let's start the another example.
+</BODY>
+
+</HTML>

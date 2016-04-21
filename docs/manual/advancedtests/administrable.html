@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Administrable Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Administrable service</B>
+<BR><BR>
+
+
+Let's try to create the service that supports remote adminstration.
+<BR><BR>
+
+This example is based on <B>remoteservice</B> primer. We will modify remote filter 
+(<B>org.sf.jini.examples.adm.AdmFilter</B>) and it's implementation (<B>org.sf.jini.examples.adm.AdmFilterImpl</B>).
+The last class is implemented as <b>administrable</b> object. To support proxy object we use
+<b>org.sf.jini.examples.common.ProxiedJiniService</b> class.
+<BR><BR>
+
+The service (<B>org.sf.jini.examples.adm.AdmFilterService</B>) registers corresponding proxy object,
+whereas the client (<B>org.sf.jini.examples.adm.AdmFilterClient</B>) is looking for required 
+service.
+<BR><BR>
+
+After the build we have 3 archives: 
+<LI>for service itself (<B>target/lib/adm-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>target/docroot/service/adm-filter-service-dl.jar</B>);</LI>
+<LI>for activation framework 
+(<B>target/docroot/service/adm-filter-service-act.jar</B>).</LI>
+<BR><BR>
+
+Now it's time to test them. Execute these commands in the following order:
+
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant phoenix.start</B>
+<BR>
+<B>>ant adm.service</B>
+<BR>
+<B>>ant adm.client</B>
+<BR><BR>
+
+The client will check the interfaces, implemented by proxy object and if
+it implements <B>Administrable</B> interface, the client will try to remove 
+the service.
+<BR><BR>
+
+To check all these events in dynamic manner, look at jini browser window.
+You will see how service is added to registrar and how it will be deleted.
+Don't forget to select the registrar from the <B>Regisrar</B> menu item.
+<BR><BR>
+
+Afrer completing the tes, don't forget to shutdown Phoenix service:
+<BR><BR>
+<B>>start ant phoenix.stop</B>
+<BR>
+
+</BODY>
+
+</HTML>

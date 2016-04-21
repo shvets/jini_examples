@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Simple Service with JERI</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Simple Remote Service over JERI</B>
+<BR><BR>
+
+This example tries to solve the same task as previous example (Simple Service). The only one difference is that
+in previous example we call service methods directly, but here we'll do it through the proxy object. The proxy object
+will be generated with the help of JERI transport protocol.
+<BR><BR>
+
+In previous example the filter implementation (<B>simpleservice.FilterImpl</B>)
+was registered as a proxy for the Jini service. This means that there was 
+no communication protocol. All work was performed on the client side. 
+<BR><BR>
+
+For this task we'll create service interface (<B>RemoteFilter</B>) for 
+remote communications and its implementation (<B>RemoteFilterImpl</B>). 
+The only reason to do it is because service interface should extend 
+<B>java.rmi.Remote</B> interface and all methods should have <B>throws</B>
+clause <B>java.rmi.RemoteException</B>.
+<BR><BR>
+
+With JERI, we don't have to create proxy class for wrapping remote implementation, like for previous
+versions of Jini. Instead, we export our implementation, e.g.:
+
+<PRE>
+    proxy = exporter.export(remote);
+</PRE>
+
+It is the responsibility of the service to do this work. The client (<B>org.sf.jini.examples.remote.RemoteFilterClient</B>)
+looks for this service proxy object.
+<BR><BR>
+
+This example depends on the following services:
+<BR>
+- reggie;
+<BR>
+- http server for Jini libraries;
+<BR>
+- http server for this service;
+<BR><BR>
+
+Before running client or service, these archives will be created:
+<LI>for service itself (<B>lib-service/remote-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>docroot/service/remote-filter-service-dl.jar</B>).</LI>
+<BR><BR>
+
+Run standard command:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR><BR>
+
+Now it's time to test the example. Execute these commands in the following order:
+
+<BR><BR>
+<B>>start ant remote.service</B>
+<BR>
+<B>>ant remote.client</B>
+<BR><BR>
+
+For demonstration purposes the code for this service uses lease renewal 
+manager. The manager will support this service for 60 seconds.
+<BR><BR>
+
+You got it? Let's go to the next example.
+<BR><BR>
+
+</BODY>
+
+</HTML>

@@ -1,0 +1,33 @@
+<project name="JavaspaceTest" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+
+  </target>
+
+  <target name="compile" depends="init">
+    <javac destdir="${classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/javaspace/*.java"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="compile">
+    <java classname="org.sf.jini.examples.javaspace.JavaSpaceTest" fork="yes">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+    </java>
+  </target>
+
+</project>

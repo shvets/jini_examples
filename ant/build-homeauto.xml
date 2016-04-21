@@ -1,0 +1,239 @@
+<project name="HomeAutomation" default="init" basedir=".">
+
+  <path id="homeauto.classpath">
+    <path refid="project.classpath"/>
+
+    <pathelement location="${serviceui.lib}"/>
+    <pathelement location="${jlayer.lib}"/>
+    <pathelement location="${jsapi.lib}"/>
+    <pathelement location="${freetts.lib}"/>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="homeauto.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/jini/home/remotecontrol/RemoteControl.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="homeauto.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/jini/gpl/music/MusicService.java"/>
+      <include name="org/jini/home/speech/GenericSpeechService.java"/>
+      <include name="org/jini/home/speech/time/TimeSpeechService.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="music.service.archive.name" value="music-service.jar"/>
+  <property name="music.service.dl.archive.name" value="music-service-dl.jar"/>
+  <property name="speech.service.archive.name" value="speech-service.jar"/>
+  <property name="speech.service.dl.archive.name" value="speech-service-dl.jar"/>
+  <property name="time.service.archive.name" value="time-service.jar"/>
+  <property name="time.service.dl.archive.name" value="time-service-dl.jar"/>
+
+  <property name="remote.control.client.archive.name" value="remote-control-client.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${music.service.archive.name}">
+      <inlist>
+        <in name="org.jini.gpl.music" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.jini.gpl.music.MusicService" />
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+        <pathelement location="${jlayer.lib}"/>
+      </classpathentries>
+    </createDepsJar>
+      
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${music.service.dl.archive.name}">
+      <inlist>
+        <in name="org.jini.gpl.music" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.jini.gpl.music.JukeboxController"/>
+        <topclass name="org.jini.gpl.music.PlayerListener" />
+        <topclass name="org.jini.gpl.music.JukeboxUIFactory"/>
+        <topclass name="org.jini.gpl.music.JukeboxUI"/>
+        <topclass name="org.jini.gpl.music.ServiceIDStorage"/>
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+        <pathelement location="${jlayer.lib}"/>
+      </classpathentries>
+
+      <filesets>
+        <zipfileset src="${serviceui.lib}" includes="net/jini/**/*.class, com/artima/**/*.class"/>
+        <zipfileset src="${jlayer.lib}" includes="javazoom/jl/**/*.class"/>        
+      </filesets>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${speech.service.archive.name}">
+      <inlist>
+        <in name="org.jini.home.speech" />
+        <in name="org.jini.home.util" />
+        <in name="org.sf.jini.examples" />        
+      </inlist>
+      <topclasslist>
+        <topclass name="org.jini.home.speech.GenericSpeechService" />
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+
+        <pathelement location="${jsapi.lib}"/>
+        <pathelement location="${freetts.lib}"/>
+      </classpathentries>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${speech.service.dl.archive.name}">
+      <inlist>
+        <in name="org.jini.home.speech" />
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.speech.Speaker"/>
+        <topclass name="org.jini.home.speech.GenericSpeechUIFactory"/>
+        <topclass name="org.jini.home.speech.GenericSpeechUI"/>
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+
+      <filesets>
+        <zipfileset src="${serviceui.lib}" includes="net/jini/**/*.class, com/artima/**/*.class"/>
+      </filesets>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${time.service.archive.name}">
+      <inlist>
+        <in name="org.jini.home.speech.time" />
+        <in name="org.jini.home.util" />
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.jini.home.speech.time.TimeSpeechService" />
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+
+        <pathelement location="${jsapi.lib}"/>
+        <pathelement location="${freetts.lib}"/>
+      </classpathentries>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${time.service.dl.archive.name}">
+      <inlist>
+        <in name="org.jini.home.speech.time" />
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.speech.Speaker"/>
+        <topclass name="org.jini.home.speech.time.TimeSpeechUIFactory"/>
+        <topclass name="org.jini.home.speech.time.TimeSpeechUI"/>
+      </topclasslist>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+      </classpathentries>
+
+      <filesets>
+        <zipfileset src="${serviceui.lib}" includes="net/jini/**/*.class, com/artima/**/*.class"/>
+      </filesets>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${remote.control.client.archive.name}">
+      <inlist>
+        <in name="org.jini.home.remotecontrol" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.jini.home.remotecontrol.RemoteControl"/>
+      </topclasslist>
+    </createDepsJar>
+  </target>
+
+  <target name="music.service" depends="jar">
+    <runJiniService classname="org.jini.gpl.music.MusicService"
+                    jarfile="${lib.for.services}/${music.service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${music.service.dl.archive.name}">
+      <args>
+        <arg value="src/main/config/music.config"/>
+      </args>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+        <pathelement location="${jlayer.lib}"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="speech.service" depends="jar">
+    <runJiniService classname="org.jini.home.speech.GenericSpeechService"
+                    jarfile="${lib.for.services}/${speech.service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${speech.service.dl.archive.name}">
+      <args>
+        <arg value="src/main/config/speech.config"/>
+      </args>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+
+        <pathelement location="${jsapi.lib}"/>
+        <pathelement location="${freetts.lib}"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="time.service" depends="jar">
+    <runJiniService classname="org.jini.home.speech.time.TimeSpeechService"
+                    jarfile="${lib.for.services}/${time.service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${time.service.dl.archive.name}">
+      <args>
+        <arg value="src/main/config/time.config"/>
+      </args>
+
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+
+        <pathelement location="${jsapi.lib}"/>
+        <pathelement location="${freetts.lib}"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+    <runJiniClient classname="org.jini.home.remotecontrol.RemoteControl"
+                   jarfile="${client.docroot}/${remote.control.client.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${serviceui.lib}"/>
+
+        <pathelement location="${jsapi.lib}"/>
+        <pathelement location="${freetts.lib}"/>
+      </classpathentries>
+    </runJiniClient>
+  </target>
+</project>

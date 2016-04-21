@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Simple Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Developing Simple Service</B>
+<BR><BR>
+
+Jini development requires a big amount of preparation work. This example, 
+like all other examples uses separate ant build file (<B>ant/build-simpleservice.xml</B>). There is
+also a main <B>build.xml</B> file, that calls corresponding commands from
+child build file.
+<BR><BR>
+
+We'll develop a very simple service (<B>org.sf.jini.examples.simpleservice.Filter</B>) that takes
+some string as a parameter, performs some modifications (filtering) and
+returns modified string. The implementation (<B>org.sf.jini.examples.simpleservice.FilterImpl</B>)
+just mirrors input string:
+<PRE>
+public class FilterImpl implements Serializable, Filter {
+
+  public FilterImpl() {}
+
+  public String filter(String message) {
+    return message;
+  }
+
+}
+</PRE>
+
+For this interface we have a service (<B>org.sf.jini.examples.simpleservice.FilterService</B>) and 
+a client (<B>org.sf.jini.examples.simpleservice.FilterClient</B>).
+<BR><BR>
+
+This example depends on the following services:
+<BR> 
+- reggie;
+<BR> 
+- http server for Jini libraries;
+<BR> 
+- http server for this service;
+<BR><BR> 
+
+You can run all these services (and some more: fiddler,  mahalo,  mercury, norm,  outrigger,
+http server for client, if necessary) by using the following command:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR><BR>
+
+You can check complete configuration for this command here:
+<B>src\main\config\start-all.config</B>.
+<BR><BR>
+
+By running server or client, ant script creates all required libraries and place them in correct folders.
+Library for the server goes to <B>target/lib</B> folder, for client to access this service - to
+<B>target/docroot/service</B>, for client who is interested in listening some events -
+to <B>target/docroot/client</B> folder. You don't have to call jar generation command directly. Otherwise,
+run this command:
+<BR><BR>
+<B>>ant sservice.jar</B>
+<BR><BR>
+
+For this example 2 archives will be generated: 
+<LI>for service itself (<B>target/lib/ss-filter-service.jar</B>);</LI>
+<LI>for client that wants to work with this service 
+(<B>target/docroot/service/ss-filter-service-dl.jar</B>).</LI>
+
+<BR><BR>
+Start the client before the service registration. It will try to find the service:
+<BR><BR>
+<B>>ant sservice.client</B>
+<BR><BR>
+
+Since the service is not registered yet, client will get the response:
+<B>"Filter service did not found"</B>.
+<BR><BR>
+
+Now let's register the service:
+<BR><BR>
+<B>>ant sservice.service</B>
+<BR><BR>
+
+The service is registered now - for 1 minute (leasing time). After that the service should
+be registered again.
+<BR><BR>
+
+Now start the client again:
+<BR><BR>
+<B>>ant sservice.client</B>
+<BR><BR>
+
+The client will retrieve required *-dl.jar from running http server for this service. This http server
+is automatically started when you start all the services. The server picks archive 
+in <B>docroot/service/ss-filter-service-dl.jar</B>
+and transmits it automatically on client's request.
+<BR><BR>
+
+</BODY>
+
+</HTML>

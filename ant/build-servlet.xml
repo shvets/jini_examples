@@ -1,0 +1,82 @@
+<project name="ServletTest" default="tomcat.start" basedir=".">
+  <description>
+    Script to start/stop Tomcat web server
+  </description>
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <copy file="${src.dir}/org/sf/jini/examples/servlet/web.xml"
+          todir="${classes.dir}/WEB-INF"/>
+
+    <property name="docbase" location="${tomcat.docbase}"/>
+
+    <filter token="docbase" value="${docbase}"/>
+    <filter token="tomcat.port" value="${tomcat.port}"/>
+
+    <copy filtering="true" overwrite="true"
+          file="${src.dir}/org/sf/jini/examples/servlet/server.xml"
+          todir="${classes.dir}"/>
+
+    <copy file="${src.dir}/org/sf/jini/examples/servlet/JiniTest.jsp"
+          todir="${classes.dir}"/>
+
+    <mkdir dir="${classes.dir}/WEB-INF/classes"/>
+
+    <javac destdir="${classes.dir}/WEB-INF/classes"
+           debug="${debug}"
+           optimize="${optimize}">
+        <classpath refid="project.classpath" />
+        <src path="${src.dir}" />
+
+        <include name ="org/sf/jini/examples/common/JiniClient.java"/>
+        <include name ="org/sf/jini/examples/simpleservice/Filter.java"/>
+        <include name ="org/sf/jini/examples/simpleservice/SimpleFilterClient.java"/>
+    </javac>
+  </target>
+
+  <target name="tomcat.start" depends="compile">
+    <antcall target="tomcat.command" inheritRefs="true">
+      <param name="config.file" location="${tomcat.config.file}"/>
+      <param name="command" value="start"/>
+      <param name="policy" value="src/main/policy/all.policy"/>
+    </antcall>
+  </target>
+
+  <target name="tomcat.stop">
+    <antcall target="tomcat.command" inheritRefs="true">
+      <param name="config.file" location="${tomcat.config.file}"/>
+      <param name="command" value="stop"/>
+    </antcall>
+  </target>
+
+  <target name="tomcat.command">
+    <java classname="org.apache.catalina.startup.Bootstrap" fork="yes">
+      <classpath>
+        <path refid="project.classpath"/>
+
+        <pathelement location="${java.home}/lib/tools.jar"/>
+        <pathelement location="${java.home}/../lib/tools.jar"/>
+        <pathelement location="${tomcat.home}/bin/bootstrap.jar"/>
+      </classpath>
+
+      <jvmarg value="-Djava.security.manager"/>
+      <jvmarg value="-Djava.security.policy=${policy}"/>
+      <jvmarg value="-Dcatalina.home=${tomcat.home}"/>
+      <jvmarg value="-Dcatalina.base=${tomcat.home}"/>
+      <jvmarg value="-Djava.io.tmpdir=${tomcat.home}/temp"/>
+
+      <jvmarg value="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"/>
+      <jvmarg value="-Djava.util.logging.config.file=${tomcat.home}\conf\logging.properties"/>
+      <jvmarg value="-Djava.endorsed.dirs=${tomcat.home}\common\endorsed"/>
+
+      <arg line="-config ${config.file} ${command}"/>
+    </java>
+  </target>
+
+</project>
+

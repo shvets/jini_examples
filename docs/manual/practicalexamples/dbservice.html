@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<HTML>
+
+<HEAD>
+  <TITLE>Database Service</TITLE>
+  <META content="text/html; charset=koi8-r" http-equiv=Content-Type>
+  <META content="Alexander Shvets" name=AUTHOR>
+</HEAD>
+  
+<BODY>
+<B>Database Service</B>
+<BR><BR>
+
+In this example we will try to communicate to database from Jini service. This example is borrowed
+from <a href="http://www.incax.com/examples.htm">IncaX</a> site. I just provide some customization to
+run example easier and for another database (<a href="http://www.hsqldb.org/">hsqldb</a>). I also tried to reuse existing
+JiniExamples code for building the service.
+<BR><BR>
+
+After the build we have 3 archives:
+<LI>for service itself (<B>lib-service/db-service.jar</B>);</LI>
+<LI>for client that wants to work with this service
+(<B>docroot/service/db-service-dl.jar</B>);</LI>
+<LI>for lookup discovery listener as activatable object
+(<B>docroot/client/db-service-act.jar</B>).</LI>
+<BR><BR>
+
+In order to run this example you have to create database table(s) first:
+<BR><BR>
+<B>>start ant dbservice.startdb</B>
+<BR><BR>
+
+Run database manager in order to populate SQL script (<b>src/main/sql/user_test.sql</b>):
+<BR><BR>
+<B>>start ant dbservice.dbmanager</B>
+<BR><BR>
+
+Select "HSQL Database Engine Server" as Type; "jdbc:hsqldb:hsql://localhost/" as URL. Click "OK" button.
+Run SQL script. Now you should have <b>user_test</b> table with 2 users defined.
+<BR><BR>
+
+Now it's time to test them. Run these commands:
+<BR><BR>
+<B>>start ant start.services</B>
+<BR>
+<B>>start ant dbservice.service</B>
+<BR>
+<B>>ant dbservice.client</B>
+<BR><BR>
+
+The client should execute 2 prepared statements: one to retrieve the list of existing users and another
+list of users with last name starting from predefined substring. 
+
+</BODY>
+
+</HTML>

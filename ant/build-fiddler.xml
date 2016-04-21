@@ -1,0 +1,113 @@
+<project name="NormTest" default="init" basedir=".">
+
+  <target name="init">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+  </target>
+
+  <target name="client.compile" depends="init">
+    <javac destdir="${client.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/fiddler/FiddlerClient.java"/>
+      <include name="org/sf/jini/examples/fiddler/FiddlerDestroyer.java"/>
+    </javac>
+  </target>
+
+  <target name="service.compile" depends="init">
+    <javac destdir="${service.classes.dir}"
+           debug="${debug}" optimize="${optimize}">
+      <classpath refid="project.classpath"/>
+      <src path="${src.dir}"/>
+
+      <include name="org/sf/jini/examples/fiddler/FiddlerService.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="client.compile, service.compile"/>
+
+  <property name="service.archive.name" value="fiddler-filter-service.jar"/>
+  <property name="service.dl.archive.name" value="fiddler-filter-service-dl.jar"/>
+  <property name="service.activation.archive.name" value="fiddler-filter-service-act.jar"/>
+  <property name="service.activation2.archive.name" value="fiddler-filter-service-act2.jar"/>
+  <property name="client1.archive.name" value="fiddler-client1.jar"/>
+  <property name="client2.archive.name" value="fiddler-client2.jar"/>
+
+  <target name="jar" depends="compile">
+    <createDepsJar classes="${service.classes.dir}" jarfile="${lib.for.services}/${service.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.fiddler.FiddlerService" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${service.classes.dir}" jarfile="${service.docroot}/${service.dl.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.simpleservice.FilterImpl" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client1.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.fiddler.FiddlerClient" />
+      </topclasslist>
+    </createDepsJar>
+
+    <createDepsJar classes="${client.classes.dir}" jarfile="${client.docroot}/${client2.archive.name}">
+      <inlist>
+        <in name="org.sf.jini.examples" />
+      </inlist>
+      <topclasslist>
+        <topclass name="org.sf.jini.examples.fiddler.FiddlerDestroyer" />
+      </topclasslist>
+    </createDepsJar>
+
+  </target>
+
+  <target name="service" depends="jar">
+    <runJiniService classname="org.sf.jini.examples.fiddler.FiddlerService"
+                    jarfile="${lib.for.services}/${service.archive.name}"
+                    policyfile="src/main/policy/all.policy"
+                    codebase="http://${service.host}:${service.port}/${service.dl.archive.name}">
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpathentries>
+    </runJiniService>
+  </target>
+
+  <target name="client" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.fiddler.FiddlerClient"
+                   jarfile="${client.docroot}/${client1.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpathentries>
+    </runJiniClient>
+
+  </target>
+
+  <target name="destroy" depends="jar">
+    <runJiniClient classname="org.sf.jini.examples.fiddler.FiddlerDestroyer"
+                   jarfile="${client.docroot}/${client2.archive.name}"
+                   policyfile="src/main/policy/all.policy">
+      <classpathentries>
+        <pathelement location="${jini.home}/lib/phoenix.jar"/>
+        <pathelement location="${jini.home}/lib/phoenix-init.jar"/>
+      </classpathentries>
+    </runJiniClient>
+  </target>
+
+</project>

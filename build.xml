@@ -1,0 +1,643 @@
+<!DOCTYPE project [
+  <!ENTITY project_classpath SYSTEM "ant/project.classpath">
+]>
+
+<project name="JiniExamples" default="usage" basedir="." 
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+
+  <description>
+    Convenient set of examples for Jini beginners
+  </description>
+
+  <property file="common.properties"/>
+  <property file="project.properties"/>
+
+  <artifact:localRepository id="local.repository" location="${repository.home}" layout="default"/>
+
+  <artifact:pom file="pom.xml" id="maven.project" />
+
+  <artifact:dependencies pathId="maven.compile.classpath"
+                         filesetId="compile.fileset" useScope="compile">
+    <pom refid="maven.project"/>
+  </artifact:dependencies>
+
+  <artifact:dependencies pathId="maven.test.classpath"
+                         filesetId="test.fileset" useScope="test">
+    <pom refid="maven.project"/>
+  </artifact:dependencies>
+
+  &project_classpath;
+
+  <import file="ant/macrodefs.xml"/>
+  <import file="ant/tools.xml"/>
+
+  <target name="info">                                        
+    <echo message="    Opreating System : ${os.name}"/>
+    <echo message="    Java Version     : ${ant.java.version}"/>
+    <echo message="    Compiler         : ${build.compiler}"/>
+    <tstamp/>
+  </target>
+
+  <target name="usage">
+    <echo>
+      The following targets are supported by this build scpript:
+
+      clean     - remove all bytecode files from "${classes.dir}" directory;
+      compile   - compile all project files.
+    </echo>
+  </target>
+
+  <target name="init" depends="info">
+    <tstamp/>
+
+    <echo message="----------- ${ant.project.name} ${version} [${year}] ------------"/>
+
+    <echo message="    Creating ${classes.dir} directory..."/>
+
+    <mkdir dir="${classes.dir}"/>
+
+    <mkdir dir="${lib.for.services}"/>
+    <mkdir dir="${client.classes.dir}"/>
+    <mkdir dir="${service.classes.dir}"/>
+    <mkdir dir="${service.docroot}"/>
+    <mkdir dir="${client.docroot}"/>
+
+  </target>
+
+  <target name="clean"
+          description="Removes all compiled files">
+    <delete dir="${lib.for.services}"/>
+    <delete dir="${client.classes.dir}"/>
+    <delete dir="${service.classes.dir}"/>
+    <delete dir="${service.docroot}"/>
+    <delete dir="${client.docroot}"/>
+
+    <delete dir="${classes.dir}"/>
+  </target>
+
+  <target name="all" depends="compile, jar"
+          description="Compiles and jars all examples"/>
+
+  <target name="compile" description="Comiles all examples"
+          depends="tests.compile, services.compile"/>
+
+  <target name="jar" description="Jars all examples"
+          depends="compile, sservice.jar, remote.jar, act.jar, adm.jar,
+          eclient.jar, egen.jar, serviceui.jar, 
+          mbox.jar, norm.jar, fiddler.jar,
+          netlib.jar, federate.jar, failover.jar"/>
+
+  <target name="tests.compile" depends="init">
+    <javac destdir="${classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement location="${testng.lib}"/>
+        <pathelement location="${jini.home}/lib/sun-util.jar"/>
+      </classpath>
+
+      <src path="src/test/java"/>
+      <src path="src/main/java"/>
+
+      <include name="org/sf/jini/examples/test/JiniServicesTest.java"/>
+    </javac>
+  </target>
+
+  <target name="test" depends="tests.compile">
+    <testng outputdir="target/test-output" sourcedir="src/test/java">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+      </classpath>
+
+      <jvmarg value='-Djava.security.policy="src/main/policy/all.policy"'/>
+
+      <classfileset dir="${classes.dir}" includes="**/*.class" />
+    </testng>
+  </target>
+
+  <target name="services.compile" depends="init">
+    <javac destdir="${classes.dir}"
+           debug="${debug}"
+           optimize="${optimize}"
+           deprecation="${deprecation}">
+      <classpath>
+        <path refid="project.classpath"/>
+        <pathelement location="${classes.dir}"/>
+        <pathelement location="${jini.home}/lib/sun-util.jar"/>
+      </classpath>
+
+      <src path="src/main/java"/>
+    </javac>
+  </target>
+
+  <!-- I. Simple Tests. -->
+
+  <!-- Simple Service. -->
+
+  <target name="sservice.compile" depends="init">
+    <ant-child antfile="ant/build-simpleservice.xml" target="compile"/>
+  </target>
+
+  <target name="sservice.jar" depends="sservice.compile">
+    <ant-child antfile="ant/build-simpleservice.xml" target="jar"/>
+  </target>
+
+  <target name="sservice.service" depends="sservice.jar">
+    <ant-child antfile="ant/build-simpleservice.xml" target="service"/>
+  </target>
+
+  <target name="sservice.client" depends="sservice.jar">
+    <ant-child antfile="ant/build-simpleservice.xml" target="client"/>
+  </target>
+
+  <target name="sservice.remover" depends="sservice.jar">
+    <ant-child antfile="ant/build-simpleservice.xml" target="remover"/>
+  </target>
+
+
+  <!-- Remote Service. -->
+
+  <target name="remote.compile" depends="init">
+    <ant-child antfile="ant/build-remote.xml" target="compile"/>
+  </target>
+
+  <target name="remote.jar" depends="remote.compile">
+    <ant-child antfile="ant/build-remote.xml" target="jar"/>
+  </target>
+
+  <target name="remote.service" depends="remote.jar">
+    <ant-child antfile="ant/build-remote.xml" target="service"/>
+  </target>
+
+  <target name="remote.client" depends="remote.jar">
+    <ant-child antfile="ant/build-remote.xml" target="client"/>
+  </target>
+
+
+  <!-- Remote Service with Configuration. -->
+
+  <target name="remoteconf.compile" depends="init">
+    <ant-child antfile="ant/build-remoteconf.xml" target="compile"/>
+  </target>
+
+  <target name="remoteconf.jar" depends="remoteconf.compile">
+    <ant-child antfile="ant/build-remoteconf.xml" target="jar"/>
+  </target>
+
+  <target name="remoteconf.service" depends="remoteconf.jar">
+    <ant-child antfile="ant/build-remoteconf.xml" target="service"/>
+  </target>
+
+  <target name="remoteconf.client" depends="remoteconf.jar">
+    <ant-child antfile="ant/build-remoteconf.xml" target="client"/>
+  </target>
+
+
+  <!-- Simple Service called inside Servlet. -->
+
+  <target name="servlet.compile" depends="init">
+    <ant-child antfile="ant/build-servlet.xml" target="compile"/>
+  </target>
+
+  <target name="tomcat.start" depends="servlet.compile">
+    <ant-child antfile="ant/build-servlet.xml" target="tomcat.start"/>
+  </target>
+
+  <target name="tomcat.stop">
+    <ant-child antfile="ant/build-servlet.xml" target="tomcat.stop"/>
+  </target>
+
+
+  <!-- Simple Service with Service UI library. -->
+
+  <target name="serviceui.compile" depends="init">
+    <ant-child antfile="ant/build-serviceui.xml" target="compile"/>
+  </target>
+
+  <target name="serviceui.jar" depends="serviceui.compile">
+    <ant-child antfile="ant/build-serviceui.xml" target="jar"/>
+  </target>
+
+  <target name="serviceui.service" depends="serviceui.jar">
+    <ant-child antfile="ant/build-serviceui.xml" target="service"/>
+  </target>
+
+  <target name="serviceui.client" depends="serviceui.jar">
+    <ant-child antfile="ant/build-serviceui.xml" target="client"/>
+  </target>
+
+
+  <target name="reef.compile" depends="init">
+    <ant-child antfile="ant/build-reef.xml" target="compile"/>
+  </target>
+
+  <target name="reef.jar" depends="init">
+    <ant-child antfile="ant/build-reef.xml" target="jar"/>
+  </target>
+
+
+  <target name="glyph.generate" depends="init">
+    <ant-child antfile="ant/build-glyph.xml" target="generate"/>
+  </target>
+
+  <target name="glyph.compile" depends="init">
+    <ant-child antfile="ant/build-glyph.xml" target="compile"/>
+  </target>
+
+  <target name="glyph.jar" depends="glyph.compile">
+    <ant-child antfile="ant/build-glyph.xml" target="jar"/>
+  </target>
+
+  <target name="glyph.services" depends="glyph.jar">
+    <ant-child antfile="ant/build-glyph.xml" target="services"/>
+  </target>
+
+  <target name="glyph.client" depends="glyph.jar">
+    <ant-child antfile="ant/build-glyph.xml" target="client"/>
+  </target>
+
+
+  <!-- II. Advanced Tests. -->
+
+  <!-- Simple Service listens to events. -->
+
+  <target name="eclient.compile" depends="init">
+    <ant-child antfile="ant/build-eventclient.xml" target="compile"/>
+  </target>
+
+  <target name="eclient.jar"  depends="eclient.compile">
+    <ant-child antfile="ant/build-eventclient.xml" target="jar"/>
+  </target>
+
+  <target name="eclient.service" depends="eclient.jar">
+    <ant-child antfile="ant/build-eventclient.xml" target="service"/>
+  </target>
+
+  <target name="eclient.client"  depends="eclient.jar">
+    <ant-child antfile="ant/build-eventclient.xml" target="client"/>
+  </target>
+
+
+  <!-- Simple Service generates events. -->
+
+  <target name="egen.compile" depends="init">
+    <ant-child antfile="ant/build-eventgen.xml" target="compile"/>
+  </target>
+
+  <target name="egen.jar" depends="egen.compile">
+    <ant-child antfile="ant/build-eventgen.xml" target="jar"/>
+  </target>
+
+  <target name="egen.service" depends="egen.jar">
+    <ant-child antfile="ant/build-eventgen.xml" target="service"/>
+  </target>
+
+  <target name="egen.client1" depends="egen.jar">
+    <ant-child antfile="ant/build-eventgen.xml" target="client1"/>
+  </target>
+
+  <target name="egen.client2" depends="egen.jar">
+    <ant-child antfile="ant/build-eventgen.xml" target="client2"/>
+  </target>
+
+
+  <!-- Activatable Service. -->
+
+  <target name="act.compile" depends="init">
+    <ant-child antfile="ant/build-activation.xml" target="compile"/>
+  </target>
+
+  <target name="act.jar" depends="act.compile">
+    <ant-child antfile="ant/build-activation.xml" target="jar"/>
+  </target>
+
+  <target name="act.service" depends="act.jar">
+    <ant-child antfile="ant/build-activation.xml" target="service"/>
+  </target>
+
+  <target name="act.client" depends="act.jar">
+    <ant-child antfile="ant/build-activation.xml" target="client"/>
+  </target>
+
+  <target name="act.updater" depends="act.compile">
+    <ant-child antfile="ant/build-activation.xml" target="updater"/>
+  </target>
+
+
+  <!-- Administrable Service. -->
+
+  <target name="adm.compile" depends="init">
+    <ant-child antfile="ant/build-adm.xml" target="compile"/>
+  </target>
+
+  <target name="adm.jar" depends="adm.compile">
+    <ant-child antfile="ant/build-adm.xml" target="jar"/>
+  </target>
+
+  <target name="adm.service" depends="adm.jar">
+    <ant-child antfile="ant/build-adm.xml" target="service"/>
+  </target>
+
+  <target name="adm.client" depends="adm.jar">
+    <ant-child antfile="ant/build-adm.xml" target="client"/>
+  </target>
+
+
+  <!-- Activatable and Administrable Service. -->
+
+  <target name="admact.compile" depends="init">
+    <ant-child antfile="ant/build-admact.xml" target="compile"/>
+  </target>
+
+  <target name="admact.jar" depends="admact.compile">
+    <ant-child antfile="ant/build-admact.xml" target="jar"/>
+  </target>
+
+  <target name="admact.service" depends="admact.jar">
+    <ant-child antfile="ant/build-admact.xml" target="service"/>
+  </target>
+
+  <target name="admact.client" depends="admact.jar">
+    <ant-child antfile="ant/build-admact.xml" target="client"/>
+  </target>
+
+
+  <!-- Event Mailbox Service. -->
+
+  <target name="mbox.compile" depends="egen.compile">
+    <ant-child antfile="ant/build-mailbox.xml" target="compile"/>
+  </target>
+
+  <target name="mbox.jar" depends="mbox.compile">
+    <ant-child antfile="ant/build-mailbox.xml" target="jar"/>
+  </target>
+
+  <target name="mbox.client1" depends="mbox.jar">
+    <ant-child antfile="ant/build-mailbox.xml" target="client1"/>
+  </target>
+
+  <target name="mbox.client2" depends="mbox.jar">
+    <ant-child antfile="ant/build-mailbox.xml" target="client2"/>
+  </target>
+
+  <target name="mbox.reader" depends="mbox.jar">
+    <ant-child antfile="ant/build-mailbox.xml" target="reader"/>
+  </target>
+
+
+  <!-- Norm Service. -->
+
+  <target name="norm.compile" depends="init">
+    <ant-child antfile="ant/build-norm.xml" target="compile"/>
+  </target>
+
+  <target name="norm.jar" depends="norm.compile">
+    <ant-child antfile="ant/build-norm.xml" target="jar"/>
+  </target>
+
+  <target name="norm.service" depends="norm.jar">
+    <ant-child antfile="ant/build-norm.xml" target="service"/>
+  </target>
+
+  <target name="norm.client" depends="norm.jar">
+    <ant-child antfile="ant/build-norm.xml" target="client"/>
+  </target>
+
+  <target name="norm.test" depends="norm.jar">
+    <ant-child antfile="ant/build-norm.xml" target="test"/>
+  </target>
+
+
+  <!-- Fiddler Service. -->
+
+  <target name="fiddler.compile" depends="init">
+    <ant-child antfile="ant/build-fiddler.xml" target="compile"/>
+  </target>
+
+  <target name="fiddler.jar" depends="fiddler.compile">
+    <ant-child antfile="ant/build-fiddler.xml" target="jar"/>
+  </target>
+
+  <target name="fiddler.service" depends="fiddler.jar">
+    <ant-child antfile="ant/build-fiddler.xml" target="service"/>
+  </target>
+
+  <target name="fiddler.client" depends="fiddler.jar">
+    <ant-child antfile="ant/build-fiddler.xml" target="client"/>
+  </target>
+
+  <target name="fiddler.destroy" depends="fiddler.jar">
+    <ant-child antfile="ant/build-fiddler.xml" target="destroy"/>
+  </target>
+
+
+  <!-- Javaspace Examples. -->
+
+  <target name="javaspace.compile" depends="init">
+    <ant-child antfile="ant/build-javaspace.xml" target="compile"/>
+  </target>
+
+  <target name="javaspace.test"  depends="javaspace.compile">
+    <ant-child antfile="ant/build-javaspace.xml" target="test"/>
+  </target>
+
+  <target name="blitzhelloworld.compile" depends="init">
+    <ant-child antfile="ant/build-blitzhelloworld.xml" target="compile"/>
+  </target>
+
+  <target name="blitzhelloworld.taker"  depends="javaspace.compile">
+    <ant-child antfile="ant/build-blitzhelloworld.xml" target="taker"/>
+  </target>
+
+  <target name="blitzhelloworld.writer"  depends="javaspace.compile">
+    <ant-child antfile="ant/build-blitzhelloworld.xml" target="writer"/>
+  </target>
+
+
+  <!-- Blitz Examples. -->
+
+  <target name="blitz.compile" depends="init">
+    <ant-child antfile="ant/build-blitz.xml" target="compile"/>
+  </target>
+
+  <target name="blitz.services"  depends="blitz.compile">
+    <ant-child antfile="ant/build-blitz.xml" target="services"/>
+  </target>
+
+  <target name="blitz.stats"  depends="blitz.compile">
+    <ant-child antfile="ant/build-blitz.xml" target="stats"/>
+  </target>
+
+  <target name="blitz.dashboard"  depends="blitz.compile">
+    <ant-child antfile="ant/build-blitz.xml" target="dashboard"/>
+  </target>
+
+  <target name="blitz.entrysizer"  depends="blitz.compile">
+    <ant-child antfile="ant/build-blitz.xml" target="entrysizer"/>
+  </target>
+
+  <!-- Federated Services Example. -->
+
+  <target name="federate.compile" depends="init">
+    <ant-child antfile="ant/build-federate.xml" target="compile"/>
+  </target>
+
+  <target name="federate.jar" depends="federate.compile">
+    <ant-child antfile="ant/build-federate.xml" target="jar"/>
+  </target>
+
+  <target name="federate.services" depends="federate.jar">
+    <ant-child antfile="ant/build-federate.xml" target="services"/>
+  </target>
+
+  <target name="federate.federate" depends="federate.compile">
+    <ant-child antfile="ant/build-federate.xml" target="federate"/>
+  </target>
+
+  <target name="federate.service" depends="federate.jar">
+    <ant-child antfile="ant/build-federate.xml" target="service"/>
+  </target>
+
+  <target name="federate.client" depends="federate.jar">
+    <ant-child antfile="ant/build-federate.xml" target="client"/>
+  </target>
+
+  <!-- Failover Service Example. -->
+
+  <target name="failover.compile" depends="init">
+    <ant-child antfile="ant/build-failover.xml" target="compile"/>
+  </target>
+
+  <target name="failover.jar" depends="failover.compile">
+    <ant-child antfile="ant/build-failover.xml" target="jar"/>
+  </target>
+
+  <target name="failover.service" depends="failover.jar">
+    <ant-child antfile="ant/build-failover.xml" target="service"/>
+  </target>
+
+  <target name="failover.client" depends="failover.jar">
+    <ant-child antfile="ant/build-failover.xml" target="client"/>
+  </target>
+
+
+  <!-- III. Practical Examples. -->
+
+  <!-- Example with NetLib library. -->
+
+  <target name="netlib.compile" depends="init">
+    <ant-child antfile="ant/build-netlib.xml" target="compile"/>
+  </target>
+
+  <target name="netlib.jar" depends="netlib.compile">
+    <ant-child antfile="ant/build-netlib.xml" target="jar"/>
+  </target>
+
+  <target name="netlib.service" depends="netlib.jar">
+    <ant-child antfile="ant/build-netlib.xml" target="service"/>
+  </target>
+
+  <target name="netlib.client" depends="netlib.jar">
+    <ant-child antfile="ant/build-netlib.xml" target="client"/>
+  </target>
+
+
+  <!-- Example with Database (hsql). -->
+
+  <target name="dbservice.compile" depends="init">
+    <ant-child antfile="ant/build-dbservice.xml" target="compile"/>
+  </target>
+
+  <target name="dbservice.jar" depends="dbservice.compile">
+    <ant-child antfile="ant/build-dbservice.xml" target="jar"/>
+  </target>
+
+  <target name="dbservice.services" depends="dbservice.jar">
+    <ant-child antfile="ant/build-dbservice.xml" target="services"/>
+  </target>
+
+  <target name="dbservice.service" depends="dbservice.jar">
+    <ant-child antfile="ant/build-dbservice.xml" target="service"/>
+  </target>
+
+  <target name="dbservice.client" depends="dbservice.jar">
+    <ant-child antfile="ant/build-dbservice.xml" target="client"/>
+  </target>
+
+  <target name="dbservice.dbmanager">
+    <ant-child antfile="ant/build-dbservice.xml" target="dbmanager"/>
+  </target>
+
+  <target name="dbservice.startdb">
+    <ant-child antfile="ant/build-dbservice.xml" target="startdb"/>
+  </target>
+
+
+  <!-- Example with FreeTTS library. -->
+
+  <target name="speaker.compile" depends="init">
+    <ant-child antfile="ant/build-speaker.xml" target="compile"/>
+  </target>
+
+  <target name="speaker.jar" depends="speaker.compile">
+    <ant-child antfile="ant/build-speaker.xml" target="jar"/>
+  </target>
+
+  <target name="speaker.service" depends="speaker.jar">
+    <ant-child antfile="ant/build-speaker.xml" target="service"/>
+  </target>
+
+  <target name="speaker.client" depends="speaker.jar">
+    <ant-child antfile="ant/build-speaker.xml" target="client"/>
+  </target>
+
+
+  <!-- More Examples with FreeTTS library. -->
+
+  <target name="homeauto.compile" depends="init">
+    <ant-child antfile="ant/build-homeauto.xml" target="compile"/>
+  </target>
+
+  <target name="homeauto.jar" depends="homeauto.compile">
+    <ant-child antfile="ant/build-homeauto.xml" target="jar"/>
+  </target>
+
+  <target name="homeauto.music.service" depends="homeauto.jar">
+    <ant-child antfile="ant/build-homeauto.xml" target="music.service"/>
+  </target>
+
+  <target name="homeauto.time.service" depends="homeauto.jar">
+    <ant-child antfile="ant/build-homeauto.xml" target="time.service"/>
+  </target>
+
+  <target name="homeauto.speech.service" depends="homeauto.jar">
+    <ant-child antfile="ant/build-homeauto.xml" target="speech.service"/>
+  </target>
+
+  <target name="homeauto.hellospeech.compile" depends="init">
+    <ant-child antfile="ant/build-homeauto.xml" target="compile"/>
+  </target>
+
+  <target name="homeauto.hellospeech.jar" depends="homeauto.compile">
+    <ant-child antfile="ant/build-homeauto.xml" target="jar"/>
+  </target>
+
+  <target name="homeauto.hellospeech.test" depends="homeauto.jar">
+    <ant-child antfile="ant/build-homeauto.xml" target="hellospeech.test"/>
+  </target>
+
+  <target name="homeauto.client" depends="homeauto.jar">
+    <ant-child antfile="ant/build-homeauto.xml" target="client"/>
+  </target>
+
+  <target name="unzip.freetts">
+    <unzip src="${repository.home}/com/sun/speech/freetts-all/1.2.1/freetts-all-1.2.1.jar"
+           dest="${repository.home}/com/sun/speech/freetts-all/1.2.1" overwrite="false"/>
+  </target>
+
+</project>
+
